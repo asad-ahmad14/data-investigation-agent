@@ -1,3 +1,4 @@
+[![CI](https://github.com/asad-ahmad14/data-investigation-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/asad-ahmad14/data-investigation-agent/actions/workflows/ci.yml)
 # Autonomous Data Analyst & Investigation Agent
 
 Ask a business question such as *"Why did net revenue drop?"* and the system investigates it:
