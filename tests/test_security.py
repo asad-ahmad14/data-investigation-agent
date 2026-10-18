@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
+from app.api.routes_investigations import get_store
 from app.core.config import Settings
 from app.core.security import PAGE_CSP, SlidingWindowLimiter
 from app.llm.base import LLMRequest
@@ -30,8 +31,18 @@ def test_page_has_strict_csp_and_frame_protection():
     assert r.headers["referrer-policy"] == "no-referrer"
 
 
+class _EmptyStore:
+    """Stands in for the database so this unit test never needs one."""
+
+    def get(self, investigation_id):
+        return None
+
+
 def test_investigation_responses_are_not_cacheable():
-    r = TestClient(create_app()).get("/investigations/00000000-0000-0000-0000-000000000000")
+    app = create_app()
+    app.dependency_overrides[get_store] = lambda: _EmptyStore()
+    r = TestClient(app).get("/investigations/00000000-0000-0000-0000-000000000000")
+    assert r.status_code == 404
     assert r.headers["cache-control"] == "no-store"
     assert r.headers["x-content-type-options"] == "nosniff"
 
