@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: retail_investigator
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-postgres-pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: retail_investigator
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ci-postgres-pw
+      APP_DB_PASSWORD: ci-app-pw
+      ANALYST_DB_PASSWORD: ci-analyst-pw
+      LLM_PROVIDER: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install (pinned versions, the ones the project was tested with)
+        run: |
+          pip install -r requirements.lock
+          pip install -e . --no-deps
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Tests (unit and integration)
+        run: pytest
+      - name: Dependency audit
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.lock --no-deps --disable-pip

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Investigation Agent</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Data Investigation Agent</h1>
+      <p class="sub">Ask why a retail metric changed. Every number in the answer comes from a database query and is cited as evidence.</p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <section class="main-col">
+      <form id="ask-form" class="card" autocomplete="off">
+        <label for="question">Your question</label>
+        <textarea id="question" rows="2" maxlength="500" required
+                  placeholder="e.g. Why did net revenue drop?"></textarea>
+        <div class="row">
+          <div class="chips" id="examples" aria-label="Example questions"></div>
+          <button type="submit" id="ask-btn">Investigate</button>
+        </div>
+      </form>
+
+      <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+      <div id="error" class="error" role="alert" hidden></div>
+      <article id="report" hidden></article>
+    </section>
+
+    <aside class="side-col">
+      <div class="card">
+        <div class="side-head">
+          <h2>Recent investigations</h2>
+          <button type="button" id="refresh" class="link">Refresh</button>
+        </div>
+        <ul id="history" class="history"></ul>
+        <p id="history-empty" class="muted" hidden>Nothing yet. Ask a question to start.</p>
+      </div>
+      <p class="muted small">Demo on a synthetic dataset. Findings show where a change is
+        concentrated, not why it happened.</p>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
